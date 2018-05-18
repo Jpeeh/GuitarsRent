@@ -63,8 +63,35 @@ Cliente *adiciona_cliente(Cliente *c) {
     return aux;
 }
 
+void escreve_ficheiro(Cliente *a) {
+    FILE *f = fopen("clientes.txt", "wt");
+    Cliente *aux = a; //cliente auxiliar para poder escrever os dados no ficheiro
+
+    while (aux != NULL) {
+        fprintf(f, "%d %d %s\n", aux->nif, aux->n_alugueres, aux->nome);
+        Aluguer *aux_aluguer = aux->lista;
+        if (aux_aluguer != NULL) {
+            while (aux_aluguer) {
+                if (aux_aluguer->fim.dia == 0)
+                    fprintf(f, "%d %d %d %d %d\n", aux_aluguer->id, aux_aluguer->estado, aux_aluguer->inicio.dia, aux_aluguer->inicio.mes, aux_aluguer->inicio.ano);
+                else {
+                    fprintf(f, "%d %d %d %d %d %d %d %d\n", aux_aluguer->id, aux_aluguer->estado,
+                            aux_aluguer->inicio.dia, aux_aluguer->inicio.mes, aux_aluguer->inicio.ano,
+                            aux_aluguer->fim.dia, aux_aluguer->fim.mes, aux_aluguer->fim.ano);
+                }
+                aux_aluguer = aux_aluguer->prox;
+            }
+        }
+        else{
+            fprintf(f,"\n");
+        }
+        aux = aux->prox;
+        fprintf(f,"\n");
+    }
+    fclose(f);
+}
+
 void adiciona_aluguer(Cliente *a, char *nome, int id, int estado) {
-    FILE *f = fopen("clientes.txt", "at");
     Aluguer *novo;
 
     while (a != NULL && strcmp(a->nome, nome) != 0)
@@ -75,24 +102,17 @@ void adiciona_aluguer(Cliente *a, char *nome, int id, int estado) {
         if (novo == NULL)
             return;
 
-        if (a->n_alugueres < 5) { //1 cliente só pode ter até 5 alugueres
-            novo->id = id;
-            novo->estado = estado;
-            printf("Data Inicial do Aluguer: ");
-            scanf(" %d %d %d", &novo->inicio.dia, &novo->inicio.mes, &novo->inicio.ano);
-            printf("Data Final do Aluguer: ");
-            scanf(" %d %d %d", &novo->fim.dia, &novo->fim.mes, &novo->fim.ano);
-
-            novo->prox = a->lista; /*insere no inicio*/
-            a->lista = novo;
-            a->n_alugueres++;
-        } else {
-            printf("No. maximo de alugueres possiveis de efectuar!\n");
-        }
+        novo->id = id;
+        novo->estado = estado;
+        printf("Data Inicial do Aluguer: ");
+        scanf(" %d %d %d", &novo->inicio.dia, &novo->inicio.mes, &novo->inicio.ano);
+        printf("Data Final do Aluguer: ");
+        scanf(" %d %d %d", &novo->fim.dia, &novo->fim.mes, &novo->fim.ano);
+        novo->prox = a->lista; /*insere no inicio*/
+        a->lista = novo;
+        a->n_alugueres++;
     }
-    fprintf(f, "\n%d\t%d\t%d\t%d\t%d\t%d\t%d\t%d", novo->id, novo->estado, novo->inicio.dia, novo->inicio.mes, novo->inicio.ano,
-            novo->fim.dia, novo->fim.mes, novo->fim.ano);
-    fclose(f);
+    escreve_ficheiro(a);
 }
 
 Cliente *remove_cliente_lista(Cliente *c, char *nome) {
@@ -116,34 +136,24 @@ Cliente *remove_cliente_lista(Cliente *c, char *nome) {
     return c;
 }
 
-void remove_cliente_ficheiro(Cliente *c) {
-    FILE *f = fopen("clientes.txt", "wt");
-
-    while (c != NULL) {
-        fprintf(f, "%d\t%d\t%s\n", c->nif, c->n_alugueres, c->nome);
-        c = c->prox;
-    }
-    fclose(f);
-}
-
 Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer, FILE *f) {
     char buf[150];
     Aluguer *aux = NULL;
-    
+
     while (fgets(buf, sizeof (buf), f)) {
         if (strcmp(buf, "\n") == 0 || strcmp(buf, " ") == 0)
-            return lista_aluguer; 
-        if((!(aux = malloc(sizeof(Aluguer)))))
+            return lista_aluguer;
+        if ((!(aux = malloc(sizeof (Aluguer)))))
             printf("Erro na Alocacao de Memoria\n");
-        
-        if(sscanf(buf, "%d %d %d %d %d %d %d %d", &aux->id, &aux->estado, &aux->inicio.dia, &aux->inicio.mes, 
-                &aux->inicio.ano, &aux->fim.dia, &aux->fim.mes, &aux->fim.ano) != 8){
-                    aux->fim.dia = 0;
-                    aux->fim.mes = 0;
-                    aux->fim.ano = 0;
-                }
+
+        if (sscanf(buf, "%d %d %d %d %d %d %d %d", &aux->id, &aux->estado, &aux->inicio.dia, &aux->inicio.mes,
+                &aux->inicio.ano, &aux->fim.dia, &aux->fim.mes, &aux->fim.ano) != 8) {
+            aux->fim.dia = 0;
+            aux->fim.mes = 0;
+            aux->fim.ano = 0;
+        }
         aux->prox = NULL;
-        
+
         if (lista_aluguer == NULL)
             lista_aluguer = aux;
         else {
@@ -159,7 +169,7 @@ Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer, FILE *f) {
 Cliente *carrega_info_cliente(Cliente *lista, Aluguer *lista_aluguer) {
     FILE *f = fopen("clientes.txt", "rt");
     Cliente *aux = NULL;
-    char buffer[150], c;
+    char buffer[300], c;
 
     if (f == NULL)
         printf("erro a abrir ficheiro %s", f);
@@ -171,7 +181,8 @@ Cliente *carrega_info_cliente(Cliente *lista, Aluguer *lista_aluguer) {
         aux->lista = NULL;
         //LEITURA DOS DADOS DOS CLIENTES
         fgets(buffer, sizeof (buffer), f); //Passar a linha toda do .txt para o buffer
-        sscanf(buffer, "%d %d %99[^\n]s", &aux->nif, &aux->n_alugueres, aux->nome); //separa a linha do buffer para as varíaveis 
+        sscanf(buffer, " %d %d %99[^\n]s", &aux->nif, &aux->n_alugueres, aux->nome); //separa a linha do buffer para as varíaveis 
+
         //LEITURA DOS DADOS DOS ALUGUERES
         aux->lista = carrega_info_aluguer(lista_aluguer, f); //carrega para memoria a info dos alugueres
         aux->prox = NULL;
@@ -201,18 +212,17 @@ void mostrar_info(Cliente *c) {
             Aluguer *aux1 = aux->lista;
             if (aux1 != NULL) {
                 while (aux1) {
-                    if(aux1->fim.dia == 0){
-                    printf("ID da Guitarra: %d\tEstado: %d\tData Inicial de Aluguer: %d/%d/%d\tData Final de Aluguer: A decorrer...\n",
-                            aux1->id, aux1->estado, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano);
-                    }
-                    else{
+                    if (aux1->fim.dia == 0) {
+                        printf("ID da Guitarra: %d\tEstado: %d\tData Inicial de Aluguer: %d/%d/%d\tData Final de Aluguer: A decorrer...\n",
+                                aux1->id, aux1->estado, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano);
+                    } else {
                         printf("ID da Guitarra: %d\tEstado: %d\tData Inicial de Aluguer: %d/%d/%d\tData Final de Aluguer: %d/%d/%d\n",
-                            aux1->id, aux1->estado, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano, aux1->fim.dia, aux1->fim.mes, aux1->fim.ano);
+                                aux1->id, aux1->estado, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano, aux1->fim.dia, aux1->fim.mes, aux1->fim.ano);
                     }
                     aux1 = aux1->prox;
                 }
-                printf("\n");
             }
+            printf("\n");
             aux = aux->prox;
         }
     }

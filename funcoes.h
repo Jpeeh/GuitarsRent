@@ -14,14 +14,20 @@
 #include <time.h>
 #include <string.h>
 
+//CLIENTES
 Cliente *adiciona_cliente(Cliente *c);
 Cliente *remove_cliente_lista(Cliente *c, char *nome);
-void remove_cliente_ficheiro(Cliente *c);
-Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer,FILE *f);
 Cliente *carrega_info_cliente(Cliente *lista, Aluguer *lista_aluguer);
 void adiciona_aluguer(Cliente *a, char *nome, int id, int estado);
-void adiciona_guitarra(Guitarra *g, int *total);
+
+//ALUGUERES
+Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer,FILE *f);
+
+//OUTROS
+void escreve_ficheiro(Cliente *a);
 void mostrar_info(Cliente *c);
 
+//GUITARRAS
+void adiciona_guitarra(Guitarra *g, int *total);
 #endif /* FUNCOES_H */
 
