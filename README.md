@@ -1,6 +1,6 @@
 # GuitarsRent
 C College Project
-Já concluído:
+ - Já concluído:
 
  - [x] Carregar Clientes e Alugueres para Memória;
  - [x] Adicionar Clientes;
