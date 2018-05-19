@@ -22,10 +22,12 @@ void adiciona_aluguer(Cliente *a, char *nome, int id, int estado);
 
 //ALUGUERES
 Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer,FILE *f);
+void alugueres_activos(Cliente *c);
 
 //OUTROS
 void escreve_ficheiro(Cliente *a);
 void mostrar_info(Cliente *c);
+int verifica_multa(Aluguer *aux);
 
 //GUITARRAS
 void adiciona_guitarra(Guitarra *g, int *total);

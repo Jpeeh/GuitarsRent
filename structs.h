@@ -18,21 +18,18 @@ typedef struct {
 } Data;
 
 typedef struct aluguer {
-    int id;
-    Data inicio;
-    Data fim;
-    int estado;
-    struct aluguer *prox;
+    int id, estado;
+    Data inicio, fim;
+    struct aluguer *prox; //ponteiro para o próximo nó da lista de alugures
 } Aluguer;
 
 typedef struct cliente {
     char nome[100];
-    int nif;
-    int cont_estado; //contador para nº de guitarras danificadas
-    int n_alugueres; //contador para o nº de alugueres
+    int nif,cont_estado,n_alugueres;
     struct cliente *prox; //ponteiro para o proximo nó da lista
     Aluguer *lista; //ponteiro para a lista dos alugueres
+    //cont_estado -> contador para nº de guitarras danificadas
+    //n_alugures -> contador para o nº de alugueres
 }Cliente;
 
 #endif /* STRUCTS_H */
-
