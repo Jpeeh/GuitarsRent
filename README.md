@@ -6,4 +6,5 @@ C College Project
  - [x] Adicionar Clientes;
  - [x] Remover Clientes;
  - [x] Listar Clientes (e seus alugueres);
- - [x] Adicionar Aluguer.
+ - [x] Adicionar Aluguer;
+ - [x] Verifica Data de Entrega de Aluguer e Multas.
