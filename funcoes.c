@@ -247,37 +247,35 @@ void alugures_activos(Cliente *c) { //FALTA IMPLEMENTAR VERIFICAÇÃO DE DIAS DE
     }
 }
 
-int verifica_multa(Aluguer *aux) {
+int verifica_multa(Aluguer *aux, Data temp) {
     int multa = 0;
-    time_t now = time(NULL);
-    struct tm *t = localtime(&now);
 
     //VAI VERIFICAR SE A DATA ACTUAL PASSOU A DATA FINAL DE ALUGUER
-    if ((t->tm_mday != aux->fim.dia) || ((t->tm_mon + 1) != aux->fim.mes) || ((t->tm_year + 1900) != aux->fim.ano)) {
+    if ((temp.dia != aux->fim.dia) || (temp.dia != aux->fim.mes) || (temp.ano != aux->fim.ano)) {
         //SE O MES E O ANO ACTUAL FOREM IGUAIS AO DA DATA DE ENTREGA
-        if ((aux->fim.mes == t->tm_mon + 1) && (aux->fim.ano == t->tm_year + 1900)) {
-            if (abs(t->tm_mday - aux->fim.dia) <= 20) { //VAI VERIFICAR SE O ATRASO TEM MENOS DE 20 DIAS
-                multa = (abs(t->tm_mday - aux->fim.dia) * 10);
+        if ((aux->fim.mes == temp.mes) && (aux->fim.ano == temp.ano)) {
+            if (abs(temp.dia- aux->fim.dia) <= 20) { //VAI VERIFICAR SE O ATRASO TEM MENOS DE 20 DIAS
+                multa = (abs(temp.dia - aux->fim.dia) * 10);
                 return multa; //está em atraso!
             } else {
                 return -1; //O CLIENTE É BANIDO, MAIS DE 20 DIAS DE ATRASO
             }
         }
 
-        if (t->tm_year + 1900 > aux->fim.ano && aux->fim.mes == t->tm_mon + 1) {
-            multa = (abs(((t->tm_year + 1900) - aux->fim.ano) * 365) + abs(t->tm_mday - aux->fim.dia)) * 10;
+        if (temp.ano > aux->fim.ano && aux->fim.mes == temp.mes) {
+            multa = (abs(((temp.ano + 1900) - aux->fim.ano) * 365) + abs(temp.dia - aux->fim.dia)) * 10;
             return multa;
-        } else if (t->tm_year + 1900 > aux->fim.ano && aux->fim.mes != t->tm_mon + 1) {
-            multa = (abs(t->tm_year + 1900 - aux->fim.ano) * 365 + abs(t->tm_mday - aux->fim.dia) + abs(aux->fim.mes - t->tm_mon + 1) * 31) * 10;
+        } else if (temp.ano > aux->fim.ano && aux->fim.mes != temp.mes) {
+            multa = (abs(temp.ano - aux->fim.ano) * 365 + abs(temp.dia - aux->fim.dia) + abs(aux->fim.mes - temp.mes) * 31) * 10;
             return multa;
         }
 
-        if (t->tm_mday == aux->fim.dia) {
-            if ((aux->fim.mes != (t->tm_mon + 1)) && (aux->fim.ano == (t->tm_year + 1900))) {
-                multa = (abs((t->tm_mon + 1 - aux->fim.mes) * 31) * 10); //31, MÉDIA DE DIAS DE UM MÊS
+        if (temp.dia == aux->fim.dia) {
+            if ((aux->fim.mes != temp.mes) && (aux->fim.ano == temp.ano)) {
+                multa = (abs((temp.mes - aux->fim.mes) * 31) * 10); //31, MÉDIA DE DIAS DE UM MÊS
                 return multa;
-            } else if ((aux->fim.ano != (t->tm_year + 1900)) && (aux->fim.mes == (t->tm_mon + 1))) {
-                multa = (abs(((t->tm_year + 1900) - aux->fim.ano) * 365) * 10);
+            } else if ((aux->fim.ano != temp.ano) && (aux->fim.mes == temp.mes)) {
+                multa = (abs((temp.ano - aux->fim.ano) * 365) * 10);
                 return multa;
             }
         }
@@ -288,6 +286,7 @@ int verifica_multa(Aluguer *aux) {
 
 void conclui_aluguer(Cliente *c, char *nome) {
     int multa = 0;
+    Data temp;
     Cliente *aux = c;
 
     while (aux) {
@@ -295,7 +294,10 @@ void conclui_aluguer(Cliente *c, char *nome) {
         while (aux1) {
             if (strcmp(aux->nome, nome) == 0) {
                 aux1->estado = 1;
-                if ((multa = verifica_multa(aux1)) == -1)
+                printf("Data de Entrega: ");
+                scanf(" %d %d %d", &temp.dia, &temp.mes, &temp.ano);
+                
+                if ((multa = verifica_multa(aux1,temp)) == -1)
                     printf("CLIENTE BANIDO!\n");
                 if (multa == 0)
                     printf("CLIENTE ENTREGOU NA DATA PREVISTA!\n");

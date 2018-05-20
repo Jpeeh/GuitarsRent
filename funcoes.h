@@ -27,7 +27,7 @@ void alugueres_activos(Cliente *c);
 //OUTROS
 void escreve_ficheiro(Cliente *a);
 void mostrar_info(Cliente *c);
-int verifica_multa(Aluguer *aux);
+int verifica_multa(Aluguer *aux, Data temp);
 
 //GUITARRAS
 void adiciona_guitarra(Guitarra *g, int *total);
