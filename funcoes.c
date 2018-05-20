@@ -22,61 +22,26 @@ void adiciona_guitarra(Guitarra *g, int *total) {
             printf("Estado: ");
             scanf(" %d", &g->estado);
         } while ((g->estado) < 0 || (g->estado > 2));
-        fprintf(ficheiro, "%d\t%.2f\t%d\t%d\t%s\n", g->id, g->preco, g->valor, g->estado, g->nome);
+        fprintf(ficheiro, " %d %.2f %d %d %s\n", g->id, g->preco, g->valor, g->estado, g->nome);
     }
     *(total)++;
     fclose(ficheiro);
 }
 
-Cliente *adiciona_cliente(Cliente *c) {
-    FILE *f = fopen("clientes.txt", "at");
-    int contador = 0;
-
-    Cliente *aux;
-    aux = malloc(sizeof (Cliente));
-
-    if (aux == NULL) {
-        printf("\nErro na alocacao de memoria\n");
-        return aux;
-    } else {
-        printf("Nome do Cliente: ");
-        scanf(" %99[^\n]", aux->nome);
-        do { // PARA VERIFICAR SE O NIF TEM 9 DÍGITOS!
-            contador = 0;
-            printf("NIF do Cliente: ");
-            scanf(" %d", &aux->nif);
-            int temp = aux->nif;
-            do {
-                temp /= 10;
-                contador++;
-            } while (temp != 0);
-        } while (contador != 9);
-
-        aux->prox = c;
-        c = aux;
-    }
-
-    fseek(f, 0, SEEK_END);
-    fprintf(f, "%d\t%d\t%s\n", aux->nif, aux->n_alugueres, aux->nome);
-    aux = aux->prox;
-
-    fclose(f);
-    return aux;
-}
-
 void escreve_ficheiro(Cliente *a) {
     FILE *f = fopen("clientes.txt", "wt");
     Cliente *aux = a; //cliente auxiliar para poder escrever os dados no ficheiro
-
+    
+    fseek(f,0,SEEK_SET);
     while (aux != NULL) {
-        fprintf(f, "%d %d %s\n", aux->nif, aux->n_alugueres, aux->nome);
+        fprintf(f, " %d %d %s\n", aux->nif, aux->n_alugueres, aux->nome);
         Aluguer *aux_aluguer = aux->lista;
         if (aux_aluguer != NULL) {
             while (aux_aluguer) {
                 if (aux_aluguer->fim.dia == 0)
-                    fprintf(f, "%d %d %d %d %d\n", aux_aluguer->id, aux_aluguer->estado, aux_aluguer->inicio.dia, aux_aluguer->inicio.mes, aux_aluguer->inicio.ano);
+                    fprintf(f, " %d %d %d %d %d\n", aux_aluguer->id, aux_aluguer->estado, aux_aluguer->inicio.dia, aux_aluguer->inicio.mes, aux_aluguer->inicio.ano);
                 else {
-                    fprintf(f, "%d %d %d %d %d %d %d %d\n", aux_aluguer->id, aux_aluguer->estado,
+                    fprintf(f, " %d %d %d %d %d %d %d %d\n", aux_aluguer->id, aux_aluguer->estado,
                             aux_aluguer->inicio.dia, aux_aluguer->inicio.mes, aux_aluguer->inicio.ano,
                             aux_aluguer->fim.dia, aux_aluguer->fim.mes, aux_aluguer->fim.ano);
                 }
@@ -91,13 +56,65 @@ void escreve_ficheiro(Cliente *a) {
     fclose(f);
 }
 
+Cliente *adiciona_cliente(Cliente *c) {
+    Cliente *aux;
+    aux = malloc(sizeof (Cliente));
+
+    if (aux == NULL) {
+        printf("\nErro na alocacao de memoria\n");
+        return aux;
+    } else {
+        printf("Nome do Cliente: ");
+        scanf(" %99[^\n]", aux->nome);
+        printf("NIF do Cliente: ");
+        scanf(" %d", &aux->nif);
+        aux->n_alugueres = 0;
+        aux->lista = NULL;
+        aux->prox = c;
+        c = aux;
+    }
+    escreve_ficheiro(aux);
+    return aux;
+}
+
+Data verifica_data(Aluguer *aux) {
+    Data temp;
+    int dia_aux;
+
+    if (aux->inicio.dia > 25) {
+        if ((aux->inicio.dia + 7) > 31 && (aux->inicio.mes != 12)) {
+            dia_aux = 31 - aux->inicio.dia;
+            temp.dia = 7 - dia_aux;
+            temp.mes = aux->inicio.mes + 1;
+            temp.ano = aux->inicio.ano;
+        }
+        if ((aux->inicio.dia + 7) > 31 && (aux->inicio.mes == 12)) {
+            dia_aux = 31 - aux->inicio.dia;
+            temp.dia = 7 - dia_aux;
+            temp.mes = 1;
+            temp.ano = aux->inicio.ano + 1;
+        }
+    } else {
+        temp.dia = aux->inicio.dia + 7;
+        temp.mes = aux->inicio.mes;
+        temp.ano = aux->inicio.ano;
+    }
+    aux->fim.dia = temp.dia;
+    aux->fim.mes = temp.mes;
+    aux->fim.ano = temp.ano;
+
+    return temp;
+}
+
 void adiciona_aluguer(Cliente *a, char *nome, int id, int estado) {
+    Cliente *temp = a;
     Aluguer *novo;
+    Data aux;
 
-    while (a != NULL && strcmp(a->nome, nome) != 0)
-        a = a->prox;
+    while (temp != NULL && strcmp(temp->nome, nome) != 0)
+        temp = temp->prox;
 
-    if (a != NULL) {
+    if (temp != NULL) {
         novo = malloc(sizeof (Aluguer));
         if (novo == NULL)
             return;
@@ -106,11 +123,11 @@ void adiciona_aluguer(Cliente *a, char *nome, int id, int estado) {
         novo->estado = estado;
         printf("Data Inicial do Aluguer: ");
         scanf(" %d %d %d", &novo->inicio.dia, &novo->inicio.mes, &novo->inicio.ano);
-        printf("Data Final do Aluguer: ");
-        scanf(" %d %d %d", &novo->fim.dia, &novo->fim.mes, &novo->fim.ano);
-        novo->prox = a->lista; /*insere no inicio*/
-        a->lista = novo;
-        a->n_alugueres++;
+        aux = verifica_data(novo);
+        printf("Data Final do Aluguer: %d/%d/%d\n", aux.dia, aux.mes, aux.ano);
+        novo->prox = temp->lista; /*insere no inicio*/
+        temp->lista = novo;
+        temp->n_alugueres = temp->n_alugueres + 1;
     }
     escreve_ficheiro(a);
 }
@@ -186,7 +203,7 @@ Cliente *carrega_info_cliente(Cliente *lista, Aluguer *lista_aluguer) {
         //LEITURA DOS DADOS DOS ALUGUERES
         aux->lista = carrega_info_aluguer(lista_aluguer, f); //carrega para memoria a info dos alugueres
         aux->prox = NULL;
-
+                
         if (lista == NULL)
             lista = aux;
         else {
@@ -254,7 +271,7 @@ int verifica_multa(Aluguer *aux, Data temp) {
     if ((temp.dia != aux->fim.dia) || (temp.dia != aux->fim.mes) || (temp.ano != aux->fim.ano)) {
         //SE O MES E O ANO ACTUAL FOREM IGUAIS AO DA DATA DE ENTREGA
         if ((aux->fim.mes == temp.mes) && (aux->fim.ano == temp.ano)) {
-            if (abs(temp.dia- aux->fim.dia) <= 20) { //VAI VERIFICAR SE O ATRASO TEM MENOS DE 20 DIAS
+            if (abs(temp.dia - aux->fim.dia) <= 20) { //VAI VERIFICAR SE O ATRASO TEM MENOS DE 20 DIAS
                 multa = (abs(temp.dia - aux->fim.dia) * 10);
                 return multa; //está em atraso!
             } else {
@@ -296,12 +313,12 @@ void conclui_aluguer(Cliente *c, char *nome) {
                 aux1->estado = 1;
                 printf("Data de Entrega: ");
                 scanf(" %d %d %d", &temp.dia, &temp.mes, &temp.ano);
-                
-                if ((multa = verifica_multa(aux1,temp)) == -1)
+                multa = verifica_multa(aux1, temp);
+                if (multa == -1)
                     printf("CLIENTE BANIDO!\n");
-                if (multa == 0)
+                else if (multa == 0)
                     printf("CLIENTE ENTREGOU NA DATA PREVISTA!\n");
-                else {
+                else if ((multa != 0) && (multa != -1)) {
                     printf("Cliente com multa de %d\n", multa);
                 }
             } else {
