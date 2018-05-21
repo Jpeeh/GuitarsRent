@@ -19,10 +19,12 @@ Cliente *adiciona_cliente(Cliente *c);
 Cliente *remove_cliente_lista(Cliente *c, char *nome);
 Cliente *carrega_info_cliente(Cliente *lista, Aluguer *lista_aluguer);
 void adiciona_aluguer(Cliente *a, char *nome, int id, int estado);
+void remove_cliente_ficheiro(Cliente *c);
 
 //ALUGUERES
 Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer,FILE *f);
 void alugueres_activos(Cliente *c);
+void conclui_aluguer(Cliente *c, char *nome);
 
 //OUTROS
 void escreve_ficheiro(Cliente *a);

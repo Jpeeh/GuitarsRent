@@ -47,8 +47,6 @@ void escreve_ficheiro(Cliente *a) {
                 }
                 aux_aluguer = aux_aluguer->prox;
             }
-        } else {
-            fprintf(f, "\n");
         }
         aux = aux->prox;
         fprintf(f, "\n");
@@ -130,6 +128,11 @@ void adiciona_aluguer(Cliente *a, char *nome, int id, int estado) {
         temp->n_alugueres = temp->n_alugueres + 1;
     }
     escreve_ficheiro(a);
+}
+
+void remove_cliente_ficheiro(Cliente *c){
+    escreve_ficheiro(c);
+    return;
 }
 
 Cliente *remove_cliente_lista(Cliente *c, char *nome) {
@@ -269,6 +272,7 @@ int verifica_multa(Aluguer *aux, Data temp) {
 
     //VAI VERIFICAR SE A DATA ACTUAL PASSOU A DATA FINAL DE ALUGUER
     if ((temp.dia != aux->fim.dia) || (temp.dia != aux->fim.mes) || (temp.ano != aux->fim.ano)) {
+        
         //SE O MES E O ANO ACTUAL FOREM IGUAIS AO DA DATA DE ENTREGA
         if ((aux->fim.mes == temp.mes) && (aux->fim.ano == temp.ano)) {
             if (abs(temp.dia - aux->fim.dia) <= 20) { //VAI VERIFICAR SE O ATRASO TEM MENOS DE 20 DIAS
@@ -303,6 +307,7 @@ int verifica_multa(Aluguer *aux, Data temp) {
 
 void conclui_aluguer(Cliente *c, char *nome) {
     int multa = 0;
+    int atraso = 0;
     Data temp;
     Cliente *aux = c;
 
@@ -319,7 +324,8 @@ void conclui_aluguer(Cliente *c, char *nome) {
                 else if (multa == 0)
                     printf("CLIENTE ENTREGOU NA DATA PREVISTA!\n");
                 else if ((multa != 0) && (multa != -1)) {
-                    printf("Cliente com multa de %d\n", multa);
+                    atraso = (multa / 10);
+                    printf("Cliente entregou com %d dias de atraso e com multa de %d\n",atraso, multa);
                 }
             } else {
                 printf("Cliente não encontrado!\n");

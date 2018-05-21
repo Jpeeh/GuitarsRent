@@ -5,7 +5,7 @@ int main(int argc, char **argv) {
     Aluguer *lista_aluguer = NULL;
 
     lista = carrega_info_cliente(lista, lista_aluguer);
-    mostrar_info(lista); 
-    
+    mostrar_info(lista);
+ 
     return (EXIT_SUCCESS);
 }
