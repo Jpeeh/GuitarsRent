@@ -26,13 +26,15 @@ Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer,FILE *f);
 void alugueres_activos(Cliente *c);
 void conclui_aluguer(Cliente *c, char *nome);
 
+//GUITARRAS
+Guitarra *criaVetor(int tam);
+void adiciona_guitarra(Guitarra *g, int *total);
+
 //OUTROS
 void escreve_ficheiro(Cliente *a);
 void mostrar_info(Cliente *c);
 int verifica_multa(Aluguer *aux, Data temp);
 Data verifica_data(Aluguer *aux);
 
-//GUITARRAS
-void adiciona_guitarra(Guitarra *g, int *total);
 #endif /* FUNCOES_H */
 

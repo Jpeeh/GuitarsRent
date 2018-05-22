@@ -1,10 +1,14 @@
 #include "funcoes.h"
 #include <stdlib.h>
 #include <stdio.h>
-#include<time.h>
+
+Guitarra *criaVetor(int tam){
+    return malloc(sizeof(Guitarra)*tam);
+}
 
 void adiciona_guitarra(Guitarra *g, int *total) {
     FILE *ficheiro = fopen("guitarras.txt", "at");
+    
     if (ficheiro == NULL)
         printf("erro no ficheiro %s\n", ficheiro);
     else {
@@ -31,8 +35,8 @@ void adiciona_guitarra(Guitarra *g, int *total) {
 void escreve_ficheiro(Cliente *a) {
     FILE *f = fopen("clientes.txt", "wt");
     Cliente *aux = a; //cliente auxiliar para poder escrever os dados no ficheiro
-    
-    fseek(f,0,SEEK_SET);
+
+    fseek(f, 0, SEEK_SET);
     while (aux != NULL) {
         fprintf(f, " %d %d %s\n", aux->nif, aux->n_alugueres, aux->nome);
         Aluguer *aux_aluguer = aux->lista;
@@ -56,6 +60,7 @@ void escreve_ficheiro(Cliente *a) {
 
 Cliente *adiciona_cliente(Cliente *c) {
     Cliente *aux;
+    int contador = 0;
     aux = malloc(sizeof (Cliente));
 
     if (aux == NULL) {
@@ -64,8 +69,15 @@ Cliente *adiciona_cliente(Cliente *c) {
     } else {
         printf("Nome do Cliente: ");
         scanf(" %99[^\n]", aux->nome);
-        printf("NIF do Cliente: ");
-        scanf(" %d", &aux->nif);
+        do {
+            printf("NIF do Cliente: ");
+            scanf(" %d", &aux->nif);
+            while (aux->nif != 0) {  //PARA O NIF TER 9 DIGITOS
+                aux->nif /= 10;
+                contador++;
+            }
+        }while(contador != 9);
+        
         aux->n_alugueres = 0;
         aux->lista = NULL;
         aux->prox = c;
@@ -130,7 +142,7 @@ void adiciona_aluguer(Cliente *a, char *nome, int id, int estado) {
     escreve_ficheiro(a);
 }
 
-void remove_cliente_ficheiro(Cliente *c){
+void remove_cliente_ficheiro(Cliente *c) {
     escreve_ficheiro(c);
     return;
 }
@@ -206,7 +218,7 @@ Cliente *carrega_info_cliente(Cliente *lista, Aluguer *lista_aluguer) {
         //LEITURA DOS DADOS DOS ALUGUERES
         aux->lista = carrega_info_aluguer(lista_aluguer, f); //carrega para memoria a info dos alugueres
         aux->prox = NULL;
-                
+
         if (lista == NULL)
             lista = aux;
         else {
@@ -248,16 +260,22 @@ void mostrar_info(Cliente *c) {
     }
 }
 
-void alugures_activos(Cliente *c) { //FALTA IMPLEMENTAR VERIFICAÇÃO DE DIAS DE ATRASO (CASO HAJA)
+void alugures_activos(Cliente *c) {
     Cliente *aux = c;
+    Data temp;
+    int multa = 0;
 
     while (aux) {
         Aluguer *aux1 = aux->lista;
         while (aux1) {
             if (aux1->estado == 0) { //Se o aluguer ainda estiver a decorrer
-                printf("NIF do Cliente: %d\tID da Guitarra :%d\nData Inicial: %d/%d/%d\tData Final: %d/%d/%d\n",
-                        aux->nif, aux1->id, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano,
-                        aux1->fim.dia, aux1->fim.mes, aux1->fim.ano);
+                temp = verifica_data(aux1);
+                if (((multa = verifica_multa(aux1, temp)) != 0) && (multa = verifica_multa(aux1, temp)) != 0) {
+                    printf("Cliente entregou com %d dias de atraso!\n", (multa / 10));
+                    printf("NIF do Cliente: %d\tID da Guitarra :%d\nData Inicial: %d/%d/%d\tData Final: %d/%d/%d\n",
+                            aux->nif, aux1->id, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano,
+                            aux1->fim.dia, aux1->fim.mes, aux1->fim.ano);
+                }
             } else {
                 printf("Não há alugueres activos!\n");
             }
@@ -272,7 +290,7 @@ int verifica_multa(Aluguer *aux, Data temp) {
 
     //VAI VERIFICAR SE A DATA ACTUAL PASSOU A DATA FINAL DE ALUGUER
     if ((temp.dia != aux->fim.dia) || (temp.dia != aux->fim.mes) || (temp.ano != aux->fim.ano)) {
-        
+
         //SE O MES E O ANO ACTUAL FOREM IGUAIS AO DA DATA DE ENTREGA
         if ((aux->fim.mes == temp.mes) && (aux->fim.ano == temp.ano)) {
             if (abs(temp.dia - aux->fim.dia) <= 20) { //VAI VERIFICAR SE O ATRASO TEM MENOS DE 20 DIAS
@@ -325,7 +343,7 @@ void conclui_aluguer(Cliente *c, char *nome) {
                     printf("CLIENTE ENTREGOU NA DATA PREVISTA!\n");
                 else if ((multa != 0) && (multa != -1)) {
                     atraso = (multa / 10);
-                    printf("Cliente entregou com %d dias de atraso e com multa de %d\n",atraso, multa);
+                    printf("Cliente entregou com %d dias de atraso e com multa de %d\n", atraso, multa);
                 }
             } else {
                 printf("Cliente não encontrado!\n");
