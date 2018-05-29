@@ -2,34 +2,41 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-Guitarra *criaVetor(int tam){
-    return malloc(sizeof(Guitarra)*tam);
+Guitarra *criaVetor(Guitarra *g, int *tam) {
+    g = (Guitarra*) malloc(sizeof(Guitarra) * (*tam));
+    if (g == NULL) {
+        *(tam) = 0;
+        return NULL;
+    }
+    return g;
 }
 
-void adiciona_guitarra(Guitarra *g, int *total) {
-    FILE *ficheiro = fopen("guitarras.txt", "at");
-    
-    if (ficheiro == NULL)
-        printf("erro no ficheiro %s\n", ficheiro);
-    else {
-        printf("ID da guitarra: ");
-        scanf(" %d", &g->id);
-        printf("Nome da guitarra: ");
-        scanf(" %99[^\n]s", g->nome);
-        do {
-            printf("Preco diario da guitarra: ");
-            scanf(" %f", &g->preco);
-        } while (g->preco < 0);
-        printf("Valor: ");
-        scanf(" %d", &g->valor);
-        do {
-            printf("Estado: ");
-            scanf(" %d", &g->estado);
-        } while ((g->estado) < 0 || (g->estado > 2));
-        fprintf(ficheiro, " %d %.2f %d %d %s\n", g->id, g->preco, g->valor, g->estado, g->nome);
+Guitarra *adiciona_guitarra(Guitarra g[], int *total) {
+    Guitarra *aux;
+    aux = (Guitarra*) realloc(g, (*total + 1) * sizeof (Guitarra));
+    if (aux == NULL)
+        return g;
+    g = aux;
+
+    printf("ID da guitarra: ");
+    scanf(" %d", &g->id);
+    printf("Nome da guitarra: ");
+    scanf(" %99[^\n]s", g->nome);
+    printf("Preco diario da guitarra: ");
+    scanf(" %f", &g->preco);
+    printf("Valor: ");
+    scanf(" %d", &g->valor);
+    printf("Estado: ");
+    scanf(" %d", &g->estado);
+    (*total)++;
+    return g;
+}
+
+void mostra_guitarras(Guitarra *g, int *total) {
+    int i;
+    for (i = 0; i < (*total); i++) {
+        printf("ID: %d\tNome: %s\tPreco: %.2f\tValor: %d\tEstado: %d", g[i].id, g[i].nome, g[i].preco, g[i].valor, g[i].estado);
     }
-    *(total)++;
-    fclose(ficheiro);
 }
 
 void escreve_ficheiro(Cliente *a) {
@@ -72,12 +79,12 @@ Cliente *adiciona_cliente(Cliente *c) {
         do {
             printf("NIF do Cliente: ");
             scanf(" %d", &aux->nif);
-            while (aux->nif != 0) {  //PARA O NIF TER 9 DIGITOS
+            while (aux->nif != 0) { //PARA O NIF TER 9 DIGITOS
                 aux->nif /= 10;
                 contador++;
             }
-        }while(contador != 9);
-        
+        } while (contador != 9);
+
         aux->n_alugueres = 0;
         aux->lista = NULL;
         aux->prox = c;

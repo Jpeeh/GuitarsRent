@@ -4,10 +4,13 @@ int main(int argc, char **argv) {
     Cliente *lista = NULL;
     Aluguer *lista_aluguer = NULL;
     Guitarra *g;
-    g = criaVetor(2);
+    int *tam = NULL;
+    g = criaVetor(g,tam);
+    g = adiciona_guitarra(g,tam);
+    mostra_guitarras(g,tam);
     
-    lista = carrega_info_cliente(lista, lista_aluguer);
-    mostrar_info(lista);
+    /*lista = carrega_info_cliente(lista, lista_aluguer);
+    mostrar_info(lista); */
     
     return (EXIT_SUCCESS);
 }

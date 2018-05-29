@@ -27,8 +27,10 @@ void alugueres_activos(Cliente *c);
 void conclui_aluguer(Cliente *c, char *nome);
 
 //GUITARRAS
-Guitarra *criaVetor(int tam);
-void adiciona_guitarra(Guitarra *g, int *total);
+Guitarra *criaVetor(Guitarra *g,int *tam);
+Guitarra *adiciona_guitarra(Guitarra *g, int *total);
+void mostra_guitarras(Guitarra *g, int *tam);
+
 
 //OUTROS
 void escreve_ficheiro(Cliente *a);
