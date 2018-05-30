@@ -3,12 +3,36 @@
 #include <stdio.h>
 
 Guitarra *criaVetor(Guitarra *g, int *tam) {
-    g = (Guitarra*) malloc(sizeof(Guitarra) * (*tam));
+    g = (Guitarra *) malloc(sizeof (Guitarra) * (*tam));
     if (g == NULL) {
         *(tam) = 0;
         return NULL;
     }
     return g;
+}
+
+Guitarra *carregaVetor(Guitarra *g, int *tam) {
+    FILE *f = fopen("guitarras.txt", "rt");
+    char c;
+    Guitarra *aux = NULL;
+
+    while ((c = getc(f)) != EOF) {
+        *(tam)++;
+    }
+    return g;
+}
+
+void escreve_ficheiro_guitarras(Guitarra g[], int *total) {
+    FILE *f = fopen("guitarras.txt", "wt");
+
+    if (f == NULL)
+        printf("erro a abrir ficheiro %s", f);
+
+    for (int i = 0; i < *total; i++) {
+        fprintf(f, " %d %.2f %d %d %s\n", g[i].id, g[i].preco, g[i].valor, g[i].estado, g[i].nome);
+    }
+    fclose(f);
+    return;
 }
 
 Guitarra *adiciona_guitarra(Guitarra g[], int *total) {
@@ -35,7 +59,15 @@ Guitarra *adiciona_guitarra(Guitarra g[], int *total) {
 void mostra_guitarras(Guitarra *g, int *total) {
     int i;
     for (i = 0; i < (*total); i++) {
-        printf("ID: %d\tNome: %s\tPreco: %.2f\tValor: %d\tEstado: %d", g[i].id, g[i].nome, g[i].preco, g[i].valor, g[i].estado);
+        printf("ID: %d\tNome: %s\tPreco: %.2f\tValor: %d\tEstado: %d\n", g[i].id, g[i].nome, g[i].preco, g[i].valor, g[i].estado);
+    }
+}
+
+void mostra_guitarras_alugadas(Guitarra *g, int *total) {
+    int i;
+    for (i = 0; i < (*total); i++) {
+        if (g[i].estado == 1)
+            printf("ID: %d\tNome: %s\tPreco: %.2f\tValor: %d\tEstado: %d\n", g[i].id, g[i].nome, g[i].preco, g[i].valor, g[i].estado);
     }
 }
 
@@ -65,25 +97,51 @@ void escreve_ficheiro(Cliente *a) {
     fclose(f);
 }
 
+int verifica_cliente(int nif) {
+    FILE *f = fopen("clientes.txt", "rt");
+    Cliente aux;
+
+    if (f == NULL)
+        printf("erro a abrir ficheiro %s", f);
+
+    while (fscanf(f, " %d %d %99[^\n]s", &aux.nif, &aux.n_alugueres, &aux.nome) == 3) {
+        if (nif == aux.nif) {
+            printf("Cliente ja existente!\n");
+            return 0;
+        }
+    }
+    return -1; //CLIENTE INEXISTENTE!
+}
+
+int verifica_nif(int nif) {
+    int contador = 0;
+
+    while (nif != 0) { //PARA O NIF TER 9 DIGITOS
+        nif = nif / 10;
+        contador++;
+    }
+
+    if (contador == 9) {
+        return 0; //NIF VÁLIDO!
+    } else {
+        return -1; //NIF INVÁLIDO!
+    }
+}
+
 Cliente *adiciona_cliente(Cliente *c) {
     Cliente *aux;
-    int contador = 0;
     aux = malloc(sizeof (Cliente));
 
     if (aux == NULL) {
         printf("\nErro na alocacao de memoria\n");
         return aux;
     } else {
-        printf("Nome do Cliente: ");
-        scanf(" %99[^\n]", aux->nome);
         do {
+            printf("Nome do Cliente: ");
+            scanf(" %99[^\n]", aux->nome);
             printf("NIF do Cliente: ");
             scanf(" %d", &aux->nif);
-            while (aux->nif != 0) { //PARA O NIF TER 9 DIGITOS
-                aux->nif /= 10;
-                contador++;
-            }
-        } while (contador != 9);
+        } while ((verifica_nif(aux->nif) != 0) || (verifica_cliente(aux->nif) != -1));
 
         aux->n_alugueres = 0;
         aux->lista = NULL;
@@ -154,11 +212,11 @@ void remove_cliente_ficheiro(Cliente *c) {
     return;
 }
 
-Cliente *remove_cliente_lista(Cliente *c, char *nome) {
+Cliente *remove_cliente_lista(Cliente *c, int nif) {
     Cliente *actual, *anterior = NULL;
     actual = c;
 
-    while (actual != NULL && (strcmp(actual->nome, nome) != 0)) {
+    while (actual != NULL && (actual->nif != nif)) {
         anterior = actual;
         actual = actual->prox;
     }
@@ -237,6 +295,17 @@ Cliente *carrega_info_cliente(Cliente *lista, Aluguer *lista_aluguer) {
     }
     fclose(f);
     return lista;
+}
+
+void escreve_clientes_banidos(Cliente *aux) {
+    FILE *f = fopen("clientes.dat", "ab+");
+    char *buf;
+    
+    if (f == NULL)
+        printf("Erro a abrir ficheiro %s\n", f);
+
+    fwrite(&aux, sizeof (aux), 1, f);
+    fclose(f);
 }
 
 void mostrar_info(Cliente *c) {
@@ -344,9 +413,11 @@ void conclui_aluguer(Cliente *c, char *nome) {
                 printf("Data de Entrega: ");
                 scanf(" %d %d %d", &temp.dia, &temp.mes, &temp.ano);
                 multa = verifica_multa(aux1, temp);
-                if (multa == -1)
+                if (multa == -1) {
                     printf("CLIENTE BANIDO!\n");
-                else if (multa == 0)
+                    c = remove_cliente_lista(c, aux->nif);
+                    escreve_clientes_banidos(aux);
+                } else if (multa == 0)
                     printf("CLIENTE ENTREGOU NA DATA PREVISTA!\n");
                 else if ((multa != 0) && (multa != -1)) {
                     atraso = (multa / 10);
@@ -359,4 +430,5 @@ void conclui_aluguer(Cliente *c, char *nome) {
         }
         aux = aux-> prox;
     }
+    escreve_ficheiro(c);
 }

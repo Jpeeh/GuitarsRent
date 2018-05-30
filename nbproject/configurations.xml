@@ -16,6 +16,7 @@
                    projectFiles="true">
       <itemPath>clientes.txt</itemPath>
       <itemPath>funcoes.c</itemPath>
+      <itemPath>guitarras.txt</itemPath>
       <itemPath>main.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
@@ -49,6 +50,8 @@
       </item>
       <item path="funcoes.h" ex="false" tool="3" flavor2="0">
       </item>
+      <item path="guitarras.txt" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="structs.h" ex="false" tool="3" flavor2="0">
@@ -80,6 +83,8 @@
       <item path="funcoes.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="funcoes.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="guitarras.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
