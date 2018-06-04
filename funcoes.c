@@ -2,6 +2,18 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+int verifica_ficheiro(FILE *f) { //VERIFICA SE O FICHEIRO ESTA VAZIO
+    int size;
+    fseek(f, 0, SEEK_END);
+
+    size = ftell(f);
+    if (size == 0)
+        return 1;
+
+    rewind(f);
+    return 0;
+}
+
 Guitarra *carregaVetor(Guitarra *g, int *tam) {
     *tam = 0;
     Guitarra aux, *vetor, *temp;
@@ -12,19 +24,15 @@ Guitarra *carregaVetor(Guitarra *g, int *tam) {
         return NULL;
     }
 
-    vetor = malloc(sizeof (Guitarra));
+    vetor = malloc(sizeof (Guitarra)); //VERIFICAR ESTE MALLOC, DEVE SER COM O TAM
     if (vetor == NULL) {
         printf("Erro alocar memoria!!\n");
         return NULL;
     }
-    if (fscanf(f, "%d %f %d %d %49[^\n]", &aux.id, &aux.preco, &aux.valor, &aux.estado, aux.nome) != 5) { //QUER DIZER QUE NAO LE NADA DO .TXT
+
+    if (verifica_ficheiro(f) == 1) {
         return NULL;
-    }
-    else {
-        (*tam)++;
-        temp = realloc(vetor, sizeof (Guitarra)*(*tam));
-        vetor = temp;
-        *(vetor + (*tam) - 1) = aux;
+    } else {
         while (fscanf(f, "%d %f %d %d %49[^\n]", &aux.id, &aux.preco, &aux.valor, &aux.estado, aux.nome) == 5) {
             (*tam)++;
             temp = realloc(vetor, sizeof (Guitarra)*(*tam));
@@ -32,7 +40,6 @@ Guitarra *carregaVetor(Guitarra *g, int *tam) {
             *(vetor + (*tam) - 1) = aux;
         }
     }
-
     return vetor;
 }
 
@@ -74,6 +81,7 @@ void mostra_guitarras(Guitarra *g, int *total) {
     int i;
     Guitarra *aux;
     aux = g;
+
     if (aux == NULL) {
         printf("Nao existem guitarras!\n");
     } else {
@@ -86,9 +94,40 @@ void mostra_guitarras(Guitarra *g, int *total) {
 
 void mostra_guitarras_alugadas(Guitarra *g, int *total) {
     int i;
-    for (i = 0; i < (*total); i++) {
-        if (g[i].estado == 1)
-            printf("ID: %d\tNome: %s\tPreco: %.2f\tValor: %d\tEstado: %d\n", g[i].id, g[i].nome, g[i].preco, g[i].valor, g[i].estado);
+    Guitarra *aux;
+    aux = g;
+
+    if (aux == NULL) {
+        printf("Nao existem guitarras!\n");
+    } else {
+        for (i = 0; i < *total; i++) {
+            if (aux[i].estado == 1)
+                printf("ID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\tNome: %s\n", (aux + i)->id, (aux + i)->preco,
+                    (aux + i)->valor, (aux + i)->estado, (aux + i)->nome);
+        }
+    }
+}
+
+void verifica_guitarras(Guitarra *g, int *total, int id) {
+    Guitarra aux;
+    FILE *f = fopen("guitarras.txt", "rt");
+
+    if (f == NULL) {
+        printf("erro a abrir %s", f);
+        return;
+    }
+    
+    if (verifica_ficheiro(f) == 1) {
+        return NULL;
+    } else {
+        while (fscanf(f, "%d %f %d %d %49[^\n]", &aux.id, &aux.preco, &aux.valor, &aux.estado, aux.nome) == 5) {
+            if(aux.id == id){
+                return 0; //EXISTEM A GUITARRA COM O ID DADO
+            }
+            else{
+                return -1;
+            }
+        }
     }
 }
 

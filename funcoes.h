@@ -35,12 +35,14 @@ Guitarra *adiciona_guitarra(Guitarra *g, int *total);
 void mostra_guitarras(Guitarra *g, int *tam);
 void mostrar_guitarras_alugadas(Guitarra *g, int *tam);
 void escreve_ficheiro_guitarras(Guitarra g[], int *total);
+void verifica_guitarras(Guitarra *g, int *total, int id);
 
 //OUTROS
 void escreve_ficheiro(Cliente *a);
 void mostrar_info(Cliente *c);
 int verifica_multa(Aluguer *aux, Data temp);
 Data verifica_data(Aluguer *aux);
+int verifica_ficheiro(FILE *f);
 
 #endif /* FUNCOES_H */
 
