@@ -92,39 +92,54 @@ void mostra_guitarras(Guitarra *g, int *total) {
     }
 }
 
-void mostra_guitarras_alugadas(Guitarra *g, int *total) {
+void mostra_guitarras_alugadas(Cliente *c, Guitarra *g, int *total) {
     int i;
     Guitarra *aux;
+    Cliente *aux1;
+    aux1 = c;
     aux = g;
 
     if (aux == NULL) {
         printf("Nao existem guitarras!\n");
-    } else {
-        for (i = 0; i < *total; i++) {
-            if (aux[i].estado == 1)
-                printf("ID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\tNome: %s\n", (aux + i)->id, (aux + i)->preco,
-                    (aux + i)->valor, (aux + i)->estado, (aux + i)->nome);
+        return;
+    }
+    if (aux1 == NULL) {
+        printf("Nao existem clientes!\n");
+        return;
+    }
+    
+    while (aux1) {
+        Aluguer *aux2 = aux1->lista;
+        while (aux2) {
+            if (aux2->estado == 0) {
+                for (i = 0; i < *total; i++) {
+                    if ((aux[i].estado == 1) && (aux[i].id == aux2->id))
+                        printf("\nNIF Cliente: %d\nID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\n", aux1->nif, (aux + i)->id, (aux + i)->preco,
+                            (aux + i)->valor, (aux + i)->estado);
+                }
+            }
+            aux2 = aux2->prox;
         }
+        aux1 = aux1->prox;
     }
 }
 
-void verifica_guitarras(Guitarra *g, int *total, int id) {
+int verifica_guitarras(Guitarra *g, int *total, int id) {
     Guitarra aux;
     FILE *f = fopen("guitarras.txt", "rt");
 
     if (f == NULL) {
         printf("erro a abrir %s", f);
-        return;
+        return -1;
     }
-    
+
     if (verifica_ficheiro(f) == 1) {
-        return NULL;
+        return -1;
     } else {
         while (fscanf(f, "%d %f %d %d %49[^\n]", &aux.id, &aux.preco, &aux.valor, &aux.estado, aux.nome) == 5) {
-            if(aux.id == id){
+            if (aux.id == id) {
                 return 0; //EXISTEM A GUITARRA COM O ID DADO
-            }
-            else{
+            } else {
                 return -1;
             }
         }

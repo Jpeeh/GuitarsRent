@@ -33,9 +33,9 @@ Guitarra *criaVetor(Guitarra *g);
 Guitarra *carregaVetor(Guitarra *g, int *tam);
 Guitarra *adiciona_guitarra(Guitarra *g, int *total);
 void mostra_guitarras(Guitarra *g, int *tam);
-void mostrar_guitarras_alugadas(Guitarra *g, int *tam);
+void mostrar_guitarras_alugadas(Cliente *c, Guitarra *g, int *tam);
 void escreve_ficheiro_guitarras(Guitarra g[], int *total);
-void verifica_guitarras(Guitarra *g, int *total, int id);
+int verifica_guitarras(Guitarra *g, int *total, int id);
 
 //OUTROS
 void escreve_ficheiro(Cliente *a);
