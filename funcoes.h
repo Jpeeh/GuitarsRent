@@ -22,13 +22,14 @@ void adiciona_aluguer(Cliente *a, char *nome, int id, int estado);
 void remove_cliente_ficheiro(Cliente *c);
 int verifica_cliente(int nif);
 void escreve_clientes_banidos(Cliente *aux);
+
 //ALUGUERES
 Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer,FILE *f);
 void alugueres_activos(Cliente *c);
 void conclui_aluguer(Cliente *c, char *nome);
 
 //GUITARRAS
-Guitarra *criaVetor(Guitarra *g, int *tam);
+Guitarra *criaVetor(Guitarra *g);
 Guitarra *carregaVetor(Guitarra *g, int *tam);
 Guitarra *adiciona_guitarra(Guitarra *g, int *total);
 void mostra_guitarras(Guitarra *g, int *tam);

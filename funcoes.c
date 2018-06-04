@@ -2,24 +2,38 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-Guitarra *criaVetor(Guitarra *g, int *tam) {
-    g = (Guitarra *) malloc(sizeof (Guitarra) * (*tam));
-    if (g == NULL) {
-        *(tam) = 0;
+Guitarra *carregaVetor(Guitarra *g, int *tam) {
+    *tam = 0;
+    Guitarra aux, *vetor, *temp;
+    FILE *f = fopen("guitarras.txt", "rt");
+
+    if (f == NULL) {
+        printf("ERRO ACEDER AO FICHEIRO!\n");
         return NULL;
     }
-    return g;
-}
 
-Guitarra *carregaVetor(Guitarra *g, int *tam) {
-    FILE *f = fopen("guitarras.txt", "rt");
-    char c;
-    Guitarra *aux = NULL;
-
-    while ((c = getc(f)) != EOF) {
-        *(tam)++;
+    vetor = malloc(sizeof (Guitarra));
+    if (vetor == NULL) {
+        printf("Erro alocar memoria!!\n");
+        return NULL;
     }
-    return g;
+    if (fscanf(f, "%d %f %d %d %49[^\n]", &aux.id, &aux.preco, &aux.valor, &aux.estado, aux.nome) != 5) { //QUER DIZER QUE NAO LE NADA DO .TXT
+        return NULL;
+    }
+    else {
+        (*tam)++;
+        temp = realloc(vetor, sizeof (Guitarra)*(*tam));
+        vetor = temp;
+        *(vetor + (*tam) - 1) = aux;
+        while (fscanf(f, "%d %f %d %d %49[^\n]", &aux.id, &aux.preco, &aux.valor, &aux.estado, aux.nome) == 5) {
+            (*tam)++;
+            temp = realloc(vetor, sizeof (Guitarra)*(*tam));
+            vetor = temp;
+            *(vetor + (*tam) - 1) = aux;
+        }
+    }
+
+    return vetor;
 }
 
 void escreve_ficheiro_guitarras(Guitarra g[], int *total) {
@@ -58,8 +72,15 @@ Guitarra *adiciona_guitarra(Guitarra g[], int *total) {
 
 void mostra_guitarras(Guitarra *g, int *total) {
     int i;
-    for (i = 0; i < (*total); i++) {
-        printf("ID: %d\tNome: %s\tPreco: %.2f\tValor: %d\tEstado: %d\n", g[i].id, g[i].nome, g[i].preco, g[i].valor, g[i].estado);
+    Guitarra *aux;
+    aux = g;
+    if (aux == NULL) {
+        printf("Nao existem guitarras!\n");
+    } else {
+        for (i = 0; i < *total; i++) {
+            printf("ID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\tNome: %s\n", (aux + i)->id, (aux + i)->preco,
+                    (aux + i)->valor, (aux + i)->estado, (aux + i)->nome);
+        }
     }
 }
 
@@ -300,7 +321,7 @@ Cliente *carrega_info_cliente(Cliente *lista, Aluguer *lista_aluguer) {
 void escreve_clientes_banidos(Cliente *aux) {
     FILE *f = fopen("clientes.dat", "ab+");
     char *buf;
-    
+
     if (f == NULL)
         printf("Erro a abrir ficheiro %s\n", f);
 
