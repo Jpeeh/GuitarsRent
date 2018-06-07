@@ -18,6 +18,7 @@
       <itemPath>funcoes.c</itemPath>
       <itemPath>guitarras.txt</itemPath>
       <itemPath>main.c</itemPath>
+      <itemPath>menu.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -54,6 +55,8 @@
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
+      <item path="menu.c" ex="false" tool="0" flavor2="0">
+      </item>
       <item path="structs.h" ex="false" tool="3" flavor2="0">
       </item>
     </conf>
@@ -87,6 +90,8 @@
       <item path="guitarras.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="menu.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="structs.h" ex="false" tool="3" flavor2="0">
       </item>

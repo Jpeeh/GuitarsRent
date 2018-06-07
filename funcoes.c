@@ -77,7 +77,7 @@ Guitarra *adiciona_guitarra(Guitarra g[], int *total) {
     return g;
 }
 
-void mostra_guitarras(Guitarra *g, int *total) {
+void mostra_guitarras(Guitarra *g, int total) {
     int i;
     Guitarra *aux;
     aux = g;
@@ -85,17 +85,18 @@ void mostra_guitarras(Guitarra *g, int *total) {
     if (aux == NULL) {
         printf("Nao existem guitarras!\n");
     } else {
-        for (i = 0; i < *total; i++) {
+        for (i = 0; i < total; i++) {
             printf("ID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\tNome: %s\n", (aux + i)->id, (aux + i)->preco,
                     (aux + i)->valor, (aux + i)->estado, (aux + i)->nome);
         }
     }
 }
 
-void mostra_guitarras_alugadas(Cliente *c, Guitarra *g, int *total) {
+void mostrar_guitarras_alugadas(Cliente *c, Guitarra *g, int total) {
     int i;
     Guitarra *aux;
     Cliente *aux1;
+    Aluguer *aux2;
     aux1 = c;
     aux = g;
 
@@ -107,20 +108,55 @@ void mostra_guitarras_alugadas(Cliente *c, Guitarra *g, int *total) {
         printf("Nao existem clientes!\n");
         return;
     }
-    
+
+    if (total == 0) {
+        printf("Nao existem guitarras de momento!\n");
+        return;
+    }
+
     while (aux1) {
-        Aluguer *aux2 = aux1->lista;
+        aux2 = aux1->lista;
         while (aux2) {
             if (aux2->estado == 0) {
-                for (i = 0; i < *total; i++) {
-                    if ((aux[i].estado == 1) && (aux[i].id == aux2->id))
-                        printf("\nNIF Cliente: %d\nID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\n", aux1->nif, (aux + i)->id, (aux + i)->preco,
-                            (aux + i)->valor, (aux + i)->estado);
+                for (i = 0; i < total; i++) {
+                    if ((aux[i].estado == 1) && (aux[i].id == aux2->id)) {
+                        printf("Nome do Cliente: %s\tNIF Cliente: %d\nID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\n", aux1->nome,
+                                aux1->nif, (aux + i)->id, (aux + i)->preco, (aux + i)->valor, (aux + i)->estado);
+                    }
                 }
+            } else {
+                printf("Nao existem guitarras alugadas no momento!\n");
             }
             aux2 = aux2->prox;
         }
         aux1 = aux1->prox;
+    }
+}
+
+void historico_guitarras(Cliente *c, int id) {
+    Cliente *aux;
+    Aluguer *aux1;
+    aux = c;
+
+    while (aux) {
+        aux1 = aux->lista;
+        while (aux1) {
+            if (aux1->id == id) {
+                if (aux1->fim.dia == 0) {
+                    printf("Aluguer ainda a decorrer!\n");
+                    printf("Nome do Cliente: %s\tData Inicial do Aluguer: %d/%d/%d", aux->nome, aux1->inicio.dia,
+                            aux1->inicio.mes, aux1->inicio.ano);
+                } else {
+                    printf("Nome do Cliente: %s\tData Inicial do Aluguer: %d/%d/%d\tData Final do Aluguer: %d/%d/%d\n", aux->nome, aux1->inicio.dia,
+                            aux1->inicio.mes, aux1->inicio.ano, aux1->fim.dia, aux1->fim.mes, aux1->fim.ano);
+                }
+            } else {
+                printf("Historico inexistente para Guitarra com ID dado!\n");
+                return;
+            }
+            aux1 = aux1->prox;
+        }
+        aux = aux->prox;
     }
 }
 
@@ -256,7 +292,7 @@ Data verifica_data(Aluguer *aux) {
     return temp;
 }
 
-void adiciona_aluguer(Cliente *a, char *nome, int id, int estado) {
+void adiciona_aluguer(Cliente *a, char *nome, int id) {
     Cliente *temp = a;
     Aluguer *novo;
     Data aux;
@@ -270,7 +306,7 @@ void adiciona_aluguer(Cliente *a, char *nome, int id, int estado) {
             return;
 
         novo->id = id;
-        novo->estado = estado;
+        novo->estado = 0;
         printf("Data Inicial do Aluguer: ");
         scanf(" %d %d %d", &novo->inicio.dia, &novo->inicio.mes, &novo->inicio.ano);
         aux = verifica_data(novo);
@@ -411,7 +447,7 @@ void mostrar_info(Cliente *c) {
     }
 }
 
-void alugures_activos(Cliente *c) {
+void alugueres_activos(Cliente *c) {
     Cliente *aux = c;
     Data temp;
     int multa = 0;
@@ -474,7 +510,7 @@ int verifica_multa(Aluguer *aux, Data temp) {
     }
 }
 
-void conclui_aluguer(Cliente *c, char *nome) {
+void conclui_aluguer(Cliente *c, int nif) {
     int multa = 0;
     int atraso = 0;
     Data temp;
@@ -483,7 +519,7 @@ void conclui_aluguer(Cliente *c, char *nome) {
     while (aux) {
         Aluguer *aux1 = aux->lista;
         while (aux1) {
-            if (strcmp(aux->nome, nome) == 0) {
+            if (aux->nif == nif) {
                 aux1->estado = 1;
                 printf("Data de Entrega: ");
                 scanf(" %d %d %d", &temp.dia, &temp.mes, &temp.ano);

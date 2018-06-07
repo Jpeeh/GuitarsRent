@@ -1,0 +1,80 @@
+#include "clientes.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "structs.h"
+#include "menu.h"
+
+int main(int argc, char** argv) {
+
+    Cliente *lista_c = NULL;
+    Aluguer *lista_a = NULL;
+    Cliente *aux;
+    int nif;
+
+    lista_c=ficheiro_para_lista_cliente(lista_c, lista_a);
+    
+    int i, j;
+
+    lista_c = ficheiro_para_lista_cliente(lista_c, lista_a);
+    do {
+        i = menu();
+        switch (i) {
+            case 1:
+                do {
+                    j = submenu1();
+                    switch (j) {
+                        case 1:puts("Falta Funcao");
+                            break;
+                        case 2:puts("Falta Funcao");
+                            break;
+                        case 3:puts("Dados cliente:\n");
+                            break;
+                        case 4:puts("Falta Funcao");
+                            break;
+                        case 5:puts("Falta Funcao");
+                            break;
+                        case 6:puts("Falta Funcao");
+                            break;
+                    }
+                } while (j != 6);
+                break;
+            case 2:
+                do {
+                    j = submenu2();
+                    switch (j) {
+                        case 1:puts("Falta Funcao");
+                            break;
+                        case 2:puts("Falta Funcao");
+                            break;
+                        case 3:puts("Falta Funcao");
+                            break;
+                        case 4:puts("Falta Funcao");
+                            break;
+                        case 5:puts("Falta Funcao");
+                            break;
+                    }
+                } while (j != 5);
+                break;
+            case 3:
+                do {
+                    j = submenu3();
+                    switch (j) {
+                        case 1:puts("Falta Funcao");
+                            break;
+                        case 2:puts("Falta Funcao");
+                            break;
+                        case 3:puts("Falta Funcao");
+                            break;
+                        case 4:puts("Falta Funcao");
+                            break;
+                    }
+                } while (j != 4);
+                break;
+        }
+    } while (i != 4);
+
+    return 0;
+}
+
+
