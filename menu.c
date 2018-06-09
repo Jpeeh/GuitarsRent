@@ -35,9 +35,9 @@ int submenu2(){
     int op;
     
     printf("\n1 - Adicionar Guitarra");
-    printf("\n2 - Mostra Historico de Guitarras");
-    printf("\n3 - Lista de Todas as Guitarras");
-    printf("\n4 - Lista das Guitarras Alugadas");
+    printf("\n2 - Historico de Guitarras");
+    printf("\n3 - Listagem de Guitarras");
+    printf("\n4 - Listagem de Guitarras Alugadas");
     printf("\n5 - Voltar Atras");
     do{
         printf("\nOpcao: ");

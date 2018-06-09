@@ -4,8 +4,7 @@ int main(int argc, char **argv) {
     Cliente *lista = NULL;
     Aluguer *lista_aluguer = NULL;
     Guitarra *g = NULL;
-    int tam = 0, i, j, nif, id, id_historico;
-    char nome[100];
+    int tam = 0, i, j, nif, id, id_historico, nif_aluguer;
 
     g = carregaVetor(g, &tam);
     lista = carrega_info_cliente(lista, lista_aluguer);
@@ -22,16 +21,19 @@ int main(int argc, char **argv) {
                     switch (j) {
                         case 1: lista = adiciona_cliente(lista);
                             break;
-                        case 2: printf("NIF do Cliente a remove: ");
+                        case 2:
+                            printf("NIF do Cliente a remove: ");
                             scanf(" %d", &nif);
                             lista = remove_cliente_lista(lista, nif);
                             remove_cliente_ficheiro(lista);
+                            mostrar_info(lista);
                             break;
-                        case 3:mostrar_info(lista);
+                        case 3:puts("Falta Funcao");
                             break;
-                        case 4:puts("Falta Funcao");
+                        case 4:
+                            mostrar_info(lista);
                             break;
-                        case 5:puts("Falta Funcao");
+                        case 5:mostra_clientes_banidos();
                             break;
                         case 6:break;
                     }
@@ -43,6 +45,7 @@ int main(int argc, char **argv) {
                     system("cls");
                     switch (j) {
                         case 1: g = adiciona_guitarra(g, &tam);
+                            escreve_ficheiro_guitarras(g, tam);
                             break;
                         case 2:
                             printf("ID da Guitarra a consultar: ");
@@ -62,11 +65,11 @@ int main(int argc, char **argv) {
                     j = submenu3();
                     system("cls");
                     switch (j) {
-                        case 1: printf("Nome do Cliente: ");
-                            scanf(" %99[^\n]s", nome);
+                        case 1: printf("NIF do Cliente: ");
+                            scanf(" %d", &nif_aluguer);
                             printf("ID da Guitarra: ");
                             scanf(" %d", &id);
-                            adiciona_aluguer(lista, nome, id);
+                            adiciona_aluguer(lista, nif_aluguer, id);
                             break;
                         case 2:printf("NIF do cliente: ");
                             scanf(" %d", &nif);

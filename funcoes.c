@@ -43,41 +43,50 @@ Guitarra *carregaVetor(Guitarra *g, int *tam) {
     return vetor;
 }
 
-void escreve_ficheiro_guitarras(Guitarra g[], int *total) {
+void escreve_ficheiro_guitarras(Guitarra *g, int total) {
     FILE *f = fopen("guitarras.txt", "wt");
+    int i;
 
-    if (f == NULL)
+    if (f == NULL) {
         printf("erro a abrir ficheiro %s", f);
-
-    for (int i = 0; i < *total; i++) {
-        fprintf(f, " %d %.2f %d %d %s\n", g[i].id, g[i].preco, g[i].valor, g[i].estado, g[i].nome);
+        return;
     }
+
+    if (g == NULL) {
+        printf("Nao existem guitarras a mostrar!\n");
+        return;
+    }
+    for (i = 0; i < total; i++) {
+        fprintf(f, " %d %.2f %d %d %s\n", (g + i)->id, (g + i)->preco, (g + i)->valor,
+                (g + i)->estado, (g + i)->nome);
+    }
+
     fclose(f);
     return;
 }
 
-Guitarra *adiciona_guitarra(Guitarra g[], int *total) {
+Guitarra *adiciona_guitarra(Guitarra *g, int *total) {
     Guitarra *aux;
     aux = (Guitarra*) realloc(g, (*total + 1) * sizeof (Guitarra));
     if (aux == NULL)
         return g;
-    g = aux;
 
     printf("ID da guitarra: ");
-    scanf(" %d", &g->id);
+    scanf(" %d", &aux[*total].id);
     printf("Nome da guitarra: ");
-    scanf(" %99[^\n]s", g->nome);
+    scanf(" %99[^\n]s", aux[*total].nome);
     printf("Preco diario da guitarra: ");
-    scanf(" %f", &g->preco);
+    scanf(" %f", &aux[*total].preco);
     printf("Valor: ");
-    scanf(" %d", &g->valor);
+    scanf(" %d", &aux[*total].valor);
     printf("Estado: ");
-    scanf(" %d", &g->estado);
+    scanf(" %d", &aux[*total].estado);
     (*total)++;
+    g = aux;
     return g;
 }
 
-void mostra_guitarras(Guitarra *g, int total) {
+void mostra_guitarras(Guitarra g[], int total) {
     int i;
     Guitarra *aux;
     aux = g;
@@ -109,19 +118,14 @@ void mostrar_guitarras_alugadas(Cliente *c, Guitarra *g, int total) {
         return;
     }
 
-    if (total == 0) {
-        printf("Nao existem guitarras de momento!\n");
-        return;
-    }
-
     while (aux1) {
         aux2 = aux1->lista;
         while (aux2) {
             if (aux2->estado == 0) {
                 for (i = 0; i < total; i++) {
-                    if ((aux[i].estado == 1) && (aux[i].id == aux2->id)) {
-                        printf("Nome do Cliente: %s\tNIF Cliente: %d\nID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\n", aux1->nome,
-                                aux1->nif, (aux + i)->id, (aux + i)->preco, (aux + i)->valor, (aux + i)->estado);
+                    if (((aux + i)->estado == 1) && ((aux + i)->id == aux2->id)) {
+                        printf("Nome do Cliente: %s\tNIF Cliente: %d\nID: %d\tPreco dia: %.2f\tValor: %d\tEstado: %d\n",
+                                aux1->nome, aux1->nif, (aux + i)->id, (aux + i)->preco, (aux + i)->valor, (aux + i)->estado);
                     }
                 }
             } else {
@@ -185,11 +189,12 @@ int verifica_guitarras(Guitarra *g, int *total, int id) {
 void escreve_ficheiro(Cliente *a) {
     FILE *f = fopen("clientes.txt", "wt");
     Cliente *aux = a; //cliente auxiliar para poder escrever os dados no ficheiro
-
+    Aluguer *aux_aluguer;
     fseek(f, 0, SEEK_SET);
+
     while (aux != NULL) {
         fprintf(f, " %d %d %s\n", aux->nif, aux->n_alugueres, aux->nome);
-        Aluguer *aux_aluguer = aux->lista;
+        aux_aluguer = aux->lista;
         if (aux_aluguer != NULL) {
             while (aux_aluguer) {
                 if (aux_aluguer->fim.dia == 0)
@@ -285,19 +290,15 @@ Data verifica_data(Aluguer *aux) {
         temp.mes = aux->inicio.mes;
         temp.ano = aux->inicio.ano;
     }
-    aux->fim.dia = temp.dia;
-    aux->fim.mes = temp.mes;
-    aux->fim.ano = temp.ano;
-
     return temp;
 }
 
-void adiciona_aluguer(Cliente *a, char *nome, int id) {
+void adiciona_aluguer(Cliente *a, int nif, int id) {
     Cliente *temp = a;
     Aluguer *novo;
     Data aux;
 
-    while (temp != NULL && strcmp(temp->nome, nome) != 0)
+    while (temp != NULL && temp->nif != nif)
         temp = temp->prox;
 
     if (temp != NULL) {
@@ -309,6 +310,10 @@ void adiciona_aluguer(Cliente *a, char *nome, int id) {
         novo->estado = 0;
         printf("Data Inicial do Aluguer: ");
         scanf(" %d %d %d", &novo->inicio.dia, &novo->inicio.mes, &novo->inicio.ano);
+        novo->fim.dia = 0;
+        novo->fim.mes = 0;
+        novo->fim.ano = 0;
+        
         aux = verifica_data(novo);
         printf("Data Final do Aluguer: %d/%d/%d\n", aux.dia, aux.mes, aux.ano);
         novo->prox = temp->lista; /*insere no inicio*/
@@ -419,11 +424,21 @@ void escreve_clientes_banidos(Cliente *aux) {
     fclose(f);
 }
 
+void mostra_clientes_banidos() {
+    FILE *f = fopen("clientes.dat", "rb");
+    Cliente aux;
+
+    while (fread(&aux, sizeof (aux), 1, f) == 1) {
+        printf("%s %d", aux.nome, aux.nif);
+    }
+    fclose(f);
+}
+
 void mostrar_info(Cliente *c) {
     Cliente *aux = c;
 
-    if (c == NULL) {
-        printf("A Lista esta vazia\n");
+    if (aux == NULL) {
+        printf("Nao existem clientes activos!\n");
         return;
     } else {
         while (aux) { //se a lista não estiver vazia
@@ -454,19 +469,23 @@ void alugueres_activos(Cliente *c) {
 
     while (aux) {
         Aluguer *aux1 = aux->lista;
-        while (aux1) {
-            if (aux1->estado == 0) { //Se o aluguer ainda estiver a decorrer
+        if (aux1->estado == 0) {
+            while (aux1) {
                 temp = verifica_data(aux1);
                 if (((multa = verifica_multa(aux1, temp)) != 0) && (multa = verifica_multa(aux1, temp)) != 0) {
                     printf("Cliente entregou com %d dias de atraso!\n", (multa / 10));
                     printf("NIF do Cliente: %d\tID da Guitarra :%d\nData Inicial: %d/%d/%d\tData Final: %d/%d/%d\n",
                             aux->nif, aux1->id, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano,
                             aux1->fim.dia, aux1->fim.mes, aux1->fim.ano);
+                } else if (aux1->estado == 0) {
+                    printf("Aluguer a decorrer!\n");
+                    printf("NIF do Cliente: %d\tID da Guitarra :%d\nData Inicial: %d/%d/%d\n",
+                            aux->nif, aux1->id, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano);
                 }
-            } else {
-                printf("Não há alugueres activos!\n");
+                aux1 = aux1->prox;
             }
-            aux1 = aux1->prox;
+        } else{
+            printf("Nao existem alugueres activos!\n");
         }
         aux = aux-> prox;
     }
@@ -474,34 +493,40 @@ void alugueres_activos(Cliente *c) {
 
 int verifica_multa(Aluguer *aux, Data temp) {
     int multa = 0;
+    Data temp_aux;
+    temp_aux = verifica_data(aux);
+
+    if (((temp.dia == aux->inicio.dia) && (temp.mes == aux->inicio.mes) && (temp.ano == aux->inicio.ano))) {
+        return 0;
+    }
 
     //VAI VERIFICAR SE A DATA ACTUAL PASSOU A DATA FINAL DE ALUGUER
-    if ((temp.dia != aux->fim.dia) || (temp.dia != aux->fim.mes) || (temp.ano != aux->fim.ano)) {
+    if ((temp.dia != temp_aux.dia) || (temp.dia != temp_aux.mes) || (temp.ano != temp_aux.ano)) {
 
         //SE O MES E O ANO ACTUAL FOREM IGUAIS AO DA DATA DE ENTREGA
-        if ((aux->fim.mes == temp.mes) && (aux->fim.ano == temp.ano)) {
-            if (abs(temp.dia - aux->fim.dia) <= 20) { //VAI VERIFICAR SE O ATRASO TEM MENOS DE 20 DIAS
-                multa = (abs(temp.dia - aux->fim.dia) * 10);
+        if ((temp_aux.mes == temp.mes) && (temp_aux.ano == temp.ano)) {
+            if (abs(temp.dia - temp_aux.dia) <= 20) { //VAI VERIFICAR SE O ATRASO TEM MENOS DE 20 DIAS
+                multa = (abs(temp.dia - temp_aux.dia) * 10);
                 return multa; //está em atraso!
             } else {
                 return -1; //O CLIENTE É BANIDO, MAIS DE 20 DIAS DE ATRASO
             }
         }
 
-        if (temp.ano > aux->fim.ano && aux->fim.mes == temp.mes) {
-            multa = (abs(((temp.ano + 1900) - aux->fim.ano) * 365) + abs(temp.dia - aux->fim.dia)) * 10;
+        if (temp.ano > temp_aux.ano && temp_aux.mes == temp.mes) {
+            multa = (abs(((temp.ano + 1900) - temp_aux.ano) * 365) + abs(temp.dia - temp_aux.dia)) * 10;
             return multa;
-        } else if (temp.ano > aux->fim.ano && aux->fim.mes != temp.mes) {
-            multa = (abs(temp.ano - aux->fim.ano) * 365 + abs(temp.dia - aux->fim.dia) + abs(aux->fim.mes - temp.mes) * 31) * 10;
+        } else if (temp.ano > temp_aux.ano && temp_aux.mes != temp.mes) {
+            multa = (abs(temp.ano - temp_aux.ano) * 365 + abs(temp.dia - temp_aux.dia) + abs(temp_aux.mes - temp.mes) * 31) * 10;
             return multa;
         }
 
-        if (temp.dia == aux->fim.dia) {
-            if ((aux->fim.mes != temp.mes) && (aux->fim.ano == temp.ano)) {
-                multa = (abs((temp.mes - aux->fim.mes) * 31) * 10); //31, MÉDIA DE DIAS DE UM MÊS
+        if (temp.dia == temp_aux.dia) {
+            if ((temp_aux.mes != temp.mes) && (temp_aux.ano == temp.ano)) {
+                multa = (abs((temp.mes - temp_aux.mes) * 31) * 10); //31, MÉDIA DE DIAS DE UM MÊS
                 return multa;
-            } else if ((aux->fim.ano != temp.ano) && (aux->fim.mes == temp.mes)) {
-                multa = (abs((temp.ano - aux->fim.ano) * 365) * 10);
+            } else if ((temp_aux.ano != temp.ano) && (temp_aux.mes == temp.mes)) {
+                multa = (abs((temp.ano - temp_aux.ano) * 365) * 10);
                 return multa;
             }
         }
@@ -523,14 +548,17 @@ void conclui_aluguer(Cliente *c, int nif) {
                 aux1->estado = 1;
                 printf("Data de Entrega: ");
                 scanf(" %d %d %d", &temp.dia, &temp.mes, &temp.ano);
+                aux1->fim.dia = temp.dia;
+                aux1->fim.mes = temp.mes;
+                aux1->fim.ano = temp.ano;
                 multa = verifica_multa(aux1, temp);
                 if (multa == -1) {
                     printf("CLIENTE BANIDO!\n");
                     c = remove_cliente_lista(c, aux->nif);
                     escreve_clientes_banidos(aux);
-                } else if (multa == 0)
-                    printf("CLIENTE ENTREGOU NA DATA PREVISTA!\n");
-                else if ((multa != 0) && (multa != -1)) {
+                } else if (multa == 0) {
+                    printf("CLIENTE ENTREGOU DENTRO DA DATA PREVISTA!\n");
+                } else if ((multa != 0) && (multa != -1)) {
                     atraso = (multa / 10);
                     printf("Cliente entregou com %d dias de atraso e com multa de %d\n", atraso, multa);
                 }
