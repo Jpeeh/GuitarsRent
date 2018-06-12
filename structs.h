@@ -32,4 +32,8 @@ typedef struct cliente {
     //n_alugures -> contador para o nº de alugueres
 }Cliente;
 
+typedef struct banido {
+    char motivo[100]; 
+    int nif;
+}Banido;
 #endif /* STRUCTS_H */

@@ -22,7 +22,7 @@ int main(int argc, char **argv) {
                         case 1: lista = adiciona_cliente(lista);
                             break;
                         case 2:
-                            printf("NIF do Cliente a remove: ");
+                            printf("NIF do Cliente a remover: ");
                             scanf(" %d", &nif);
                             lista = remove_cliente_lista(lista, nif);
                             remove_cliente_ficheiro(lista);
@@ -69,14 +69,14 @@ int main(int argc, char **argv) {
                             scanf(" %d", &nif_aluguer);
                             printf("ID da Guitarra: ");
                             scanf(" %d", &id);
-                            adiciona_aluguer(lista, nif_aluguer, id);
+                            adiciona_aluguer(lista, g, tam, nif_aluguer, id);
                             break;
                         case 2:printf("NIF do cliente: ");
                             scanf(" %d", &nif);
-                            conclui_aluguer(lista, nif);
+                            conclui_aluguer(lista, g, tam, nif);
                             break;
                         case 3:
-                            alugueres_activos(lista);
+                            alugueres_activos(g,tam,lista);
                             break;
                         case 4:break;
                     }

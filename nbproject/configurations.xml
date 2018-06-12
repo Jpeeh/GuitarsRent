@@ -14,6 +14,7 @@
     <logicalFolder name="SourceFiles"
                    displayName="Source Files"
                    projectFiles="true">
+      <itemPath>clientes.dat</itemPath>
       <itemPath>clientes.txt</itemPath>
       <itemPath>funcoes.c</itemPath>
       <itemPath>guitarras.txt</itemPath>
@@ -45,6 +46,8 @@
           <standard>3</standard>
         </cTool>
       </compileType>
+      <item path="clientes.dat" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="clientes.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="funcoes.c" ex="false" tool="0" flavor2="0">
@@ -81,6 +84,8 @@
           <developmentMode>5</developmentMode>
         </asmTool>
       </compileType>
+      <item path="clientes.dat" ex="false" tool="3" flavor2="0">
+      </item>
       <item path="clientes.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="funcoes.c" ex="false" tool="0" flavor2="0">
