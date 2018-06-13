@@ -40,7 +40,7 @@ void escreve_ficheiro_guitarras(Guitarra *g, int total);
 int verifica_guitarras(Guitarra *g, int *total, int id);
 void historico_guitarras(Cliente *c, int id);
 float multa_guitarra(Guitarra *g, int id, int total);
-void actualiza_estado_guitarra(Guitarra *g, int total, int estado, int id);  //NÃO ESTÁ A ACTUALIZAR ESTADO DA GUITARRA
+Guitarra *actualiza_estado_guitarra(Guitarra *g, int total, int estado, int id);
 
 //OUTROS
 void escreve_ficheiro(Cliente *a);

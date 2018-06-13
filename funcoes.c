@@ -308,8 +308,8 @@ void adiciona_aluguer(Cliente *a, Guitarra *g, int total, int nif, int id) {
 
         novo->id = id;
         novo->estado = 0;
-        actualiza_estado_guitarra(g, total, 1, novo->id);
-        
+        g = actualiza_estado_guitarra(g, total, 1, novo->id);
+
         printf("Data Inicial do Aluguer: ");
         scanf(" %d %d %d", &novo->inicio.dia, &novo->inicio.mes, &novo->inicio.ano);
         novo->fim.dia = 0; // METER A ZERO POR QUE O ALUGUER ESTÁ A DECORRER
@@ -389,7 +389,7 @@ int verifica_cliente_banido(int nif) {
         printf("Erro a abrir ficheiro %s", f);
 
     while (fread(&aux, sizeof (aux), 1, f) == 1) {
-        if (aux.nif == nif){
+        if (aux.nif == nif) {
             printf("Cliente já banido!\n");
             return -1; //CLIENTE BANIDO, JÁ NAO PODE CRIAR "CONTA"!
         }
@@ -494,8 +494,8 @@ void alugueres_activos(Guitarra *g, int tam, Cliente *c) {
         Aluguer *aux1 = aux->lista;
         while (aux1) {
             if (aux1->estado == 0) {
-                    printf("NIF do Cliente: %d\tID da Guitarra :%d\nData Inicial: %d/%d/%d\n",
-                            aux->nif, aux1->id, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano);
+                printf("NIF do Cliente: %d\tID da Guitarra :%d\nData Inicial: %d/%d/%d\n",
+                        aux->nif, aux1->id, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano);
             }
             aux1 = aux1->prox;
         }
@@ -551,13 +551,14 @@ int verifica_atraso(Guitarra* g, int total, Aluguer *aux, Data temp) { //CONSIDE
 
 }
 
-void actualiza_estado_guitarra(Guitarra *g, int total, int estado, int id) {
+Guitarra *actualiza_estado_guitarra(Guitarra *g, int total, int estado, int id) {
     for (int i = 0; i < total; i++) {
         if ((g + i)->id == id) {
-            (g + i)->estado == estado;
+            (g + i)->estado = estado;
         }
     }
     escreve_ficheiro_guitarras(g, total);
+    return g;
 }
 
 void conclui_aluguer(Cliente *c, Guitarra *g, int total, int nif) {
@@ -582,38 +583,49 @@ void conclui_aluguer(Cliente *c, Guitarra *g, int total, int nif) {
                 printf("Estado da Guitarra: ");
                 scanf(" %d", &estado);
 
-                if (estado == 2) {
-                    if (aux->cont_estado < 3) {
-                        aux->cont_estado++;
-                    } else {
-                        actualiza_estado_guitarra(g, total, estado, aux1->id);
-                        printf("CLIENTE BANIDO POR DANOS MATERIAIS!\n");
-                        c = remove_cliente_lista(c, aux->nif);
-                        //Passar os dados do cliente que está no nó para uma estrutura de clientes banidos auxiliar
-                        ban.nif = aux->nif;
-                        strcpy(ban.motivo, "Guitarras Danificadas!");
-                        escreve_clientes_banidos(ban);
-                        escreve_ficheiro(c);
-                        return;
-                    }
-                }
-
-                actualiza_estado_guitarra(g, total, estado, aux1->id);
-
-                if (pagamento != -1) {
-                    printf("Cliente tem a pagar: %.2f\n", pagamento);
-                } else {
-                    printf("CLIENTE BANIDO POR ATRASO!\n");
+                if (estado == 2 && aux->cont_estado <= 3) { //SE ENTREGAR GUITARRA DANIFICADA PELA 4ªVEZ
+                    g = actualiza_estado_guitarra(g, total, estado, aux1->id);
+                    printf("CLIENTE BANIDO POR DANOS MATERIAIS!\n");
                     c = remove_cliente_lista(c, aux->nif);
                     //Passar os dados do cliente que está no nó para uma estrutura de clientes banidos auxiliar
                     ban.nif = aux->nif;
-                    strcpy(ban.motivo, "Mais de 20 dias de atraso de entrega!");
+                    strcpy(ban.motivo, "Guitarras Danificadas!");
                     escreve_clientes_banidos(ban);
+                    escreve_ficheiro(c);
+                    return;
+                }
+
+                if (estado == 2) {
+                    aux->n_alugueres--;
+                    aux1->estado = 2;
+                    for (int i = 0; i < total; i++) { //SE ENTREGAR A GUITARRA DANIFICADA, A MULTA É O VALOR DA GUITARRA
+                        if ((g + i)->id == aux1->id) {
+                            g = actualiza_estado_guitarra(g, total, estado, aux1->id);
+                            printf("Valor a pagar e de: %d", (g + i)->valor);
+                        }
+                    }
+                }
+
+                if (estado == 1) {
+                    aux->n_alugueres--;
+                    aux1->estado = 1;
+                    g = actualiza_estado_guitarra(g, total, estado, aux1->id);
+                    if (pagamento != -1) {
+                        printf("Cliente tem a pagar: %.2f\n", pagamento);
+                    } else {
+                        printf("CLIENTE BANIDO POR ATRASO!\n");
+                        c = remove_cliente_lista(c, aux->nif);
+                        //Passar os dados do cliente que está no nó para uma estrutura de clientes banidos auxiliar
+                        ban.nif = aux->nif;
+                        strcpy(ban.motivo, "Mais de 20 dias de atraso de entrega!");
+                        escreve_clientes_banidos(ban);
+                    }
                 }
             }
             aux1 = aux1->prox;
         }
         aux = aux-> prox;
     }
+
     escreve_ficheiro(c);
 }
