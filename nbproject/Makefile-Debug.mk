@@ -35,9 +35,11 @@ OBJECTDIR=${CND_BUILDDIR}/${CND_CONF}/${CND_PLATFORM}
 
 # Object Files
 OBJECTFILES= \
-	${OBJECTDIR}/funcoes.o \
+	${OBJECTDIR}/clientes_alugueres.o \
+	${OBJECTDIR}/guitarras.o \
 	${OBJECTDIR}/main.o \
-	${OBJECTDIR}/menu.o
+	${OBJECTDIR}/menu.o \
+	${OBJECTDIR}/outros.o
 
 
 # C Compiler Flags
@@ -64,10 +66,15 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/trabalho.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/trabalho ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/funcoes.o: funcoes.c 
+${OBJECTDIR}/clientes_alugueres.o: clientes_alugueres.c 
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
-	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/funcoes.o funcoes.c
+	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/clientes_alugueres.o clientes_alugueres.c
+
+${OBJECTDIR}/guitarras.o: guitarras.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/guitarras.o guitarras.c
 
 ${OBJECTDIR}/main.o: main.c 
 	${MKDIR} -p ${OBJECTDIR}
@@ -78,6 +85,11 @@ ${OBJECTDIR}/menu.o: menu.c
 	${MKDIR} -p ${OBJECTDIR}
 	${RM} "$@.d"
 	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/menu.o menu.c
+
+${OBJECTDIR}/outros.o: outros.c 
+	${MKDIR} -p ${OBJECTDIR}
+	${RM} "$@.d"
+	$(COMPILE.c) -g -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/outros.o outros.c
 
 # Subprojects
 .build-subprojects:

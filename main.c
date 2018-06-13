@@ -1,4 +1,9 @@
-#include "funcoes.h"
+#include "structs.h"
+#include "outros.h"
+#include "clientes_alugueres.h"
+#include "guitarras.h"
+#include "menus.h"
+
 
 int main(int argc, char **argv) {
     Cliente *lista = NULL;
@@ -10,7 +15,7 @@ int main(int argc, char **argv) {
     lista = carrega_info_cliente(lista, lista_aluguer);
 
     do {
-        printf(" | ALUGUER DE GUITARRAS |\n");
+        printf("\t\tALUGUER DE GUITARRAS\n");
         i = menu();
         system("cls");
         switch (i) {

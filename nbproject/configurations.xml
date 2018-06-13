@@ -4,7 +4,10 @@
     <logicalFolder name="HeaderFiles"
                    displayName="Header Files"
                    projectFiles="true">
-      <itemPath>funcoes.h</itemPath>
+      <itemPath>clientes_alugueres.h</itemPath>
+      <itemPath>guitarras.h</itemPath>
+      <itemPath>menus.h</itemPath>
+      <itemPath>outros.h</itemPath>
       <itemPath>structs.h</itemPath>
     </logicalFolder>
     <logicalFolder name="ResourceFiles"
@@ -16,10 +19,12 @@
                    projectFiles="true">
       <itemPath>clientes.dat</itemPath>
       <itemPath>clientes.txt</itemPath>
-      <itemPath>funcoes.c</itemPath>
+      <itemPath>clientes_alugueres.c</itemPath>
+      <itemPath>guitarras.c</itemPath>
       <itemPath>guitarras.txt</itemPath>
       <itemPath>main.c</itemPath>
       <itemPath>menu.c</itemPath>
+      <itemPath>outros.c</itemPath>
     </logicalFolder>
     <logicalFolder name="TestFiles"
                    displayName="Test Files"
@@ -50,15 +55,25 @@
       </item>
       <item path="clientes.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="funcoes.c" ex="false" tool="0" flavor2="0">
+      <item path="clientes_alugueres.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="funcoes.h" ex="false" tool="3" flavor2="0">
+      <item path="clientes_alugueres.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="guitarras.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="guitarras.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="guitarras.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="menu.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="menus.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="outros.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="outros.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="structs.h" ex="false" tool="3" flavor2="0">
       </item>
@@ -88,15 +103,25 @@
       </item>
       <item path="clientes.txt" ex="false" tool="3" flavor2="0">
       </item>
-      <item path="funcoes.c" ex="false" tool="0" flavor2="0">
+      <item path="clientes_alugueres.c" ex="false" tool="0" flavor2="0">
       </item>
-      <item path="funcoes.h" ex="false" tool="3" flavor2="0">
+      <item path="clientes_alugueres.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="guitarras.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="guitarras.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="guitarras.txt" ex="false" tool="3" flavor2="0">
       </item>
       <item path="main.c" ex="false" tool="0" flavor2="0">
       </item>
       <item path="menu.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="menus.h" ex="false" tool="3" flavor2="0">
+      </item>
+      <item path="outros.c" ex="false" tool="0" flavor2="0">
+      </item>
+      <item path="outros.h" ex="false" tool="3" flavor2="0">
       </item>
       <item path="structs.h" ex="false" tool="3" flavor2="0">
       </item>

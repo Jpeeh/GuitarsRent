@@ -1,9 +1,14 @@
 /* 
- * File:   cliente.h
+ * File:   structs.h
  * Author: Joao
  *
- * Created on 23 de Abril de 2017, 04:53
+ * Created on 30 de Maio de 2018, 11:28
  */
+
+#include <stdio.h>
+#include <string.h>
+#include <stdlib.h>
+#include <time.h>
 #ifndef STRUCTS_H
 #define STRUCTS_H
 
@@ -36,4 +41,5 @@ typedef struct banido {
     char motivo[100]; 
     int nif;
 }Banido;
+
 #endif /* STRUCTS_H */
