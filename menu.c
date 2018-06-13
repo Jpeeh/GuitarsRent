@@ -20,14 +20,13 @@ int submenu1(){
     
     printf("\n1 - Adicionar Cliente");
     printf("\n2 - Remover Cliente(Ativo)");
-    printf("\n3 - Dados Cliente");
-    printf("\n4 - Lista de Clientes Ativos");
-    printf("\n5 - Lista de Clientes Banidos");
-    printf("\n6 - Voltar Atras");
+    printf("\n3 - Lista de Clientes Ativos");
+    printf("\n4 - Lista de Clientes Banidos");
+    printf("\n5 - Voltar Atras");
     do{
         printf("\nOpcao: ");
         scanf("%d",&op);
-    }while(op<1 || op>6);
+    }while(op<1 || op>5);
     return op;
 }
 

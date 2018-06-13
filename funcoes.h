@@ -27,7 +27,7 @@ int verifica_cliente_banido(int nif);
 
 //ALUGUERES
 Aluguer *carrega_info_aluguer(Aluguer *lista_aluguer, FILE *f);
-void alugueres_activos(Guitarra *g, int tam, Cliente *c);
+void alugueres_activos(Cliente *c);
 void conclui_aluguer(Cliente *c,Guitarra *g, int total, int nif);
 
 //GUITARRAS
@@ -41,6 +41,7 @@ int verifica_guitarras(Guitarra *g, int *total, int id);
 void historico_guitarras(Cliente *c, int id);
 float multa_guitarra(Guitarra *g, int id, int total);
 Guitarra *actualiza_estado_guitarra(Guitarra *g, int total, int estado, int id);
+int verifica_guitarra_danificada(Guitarra *g, int total, int id);
 
 //OUTROS
 void escreve_ficheiro(Cliente *a);

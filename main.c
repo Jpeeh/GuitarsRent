@@ -26,18 +26,15 @@ int main(int argc, char **argv) {
                             scanf(" %d", &nif);
                             lista = remove_cliente_lista(lista, nif);
                             remove_cliente_ficheiro(lista);
+                            break;
+                        case 3:
                             mostrar_info(lista);
                             break;
-                        case 3:puts("Falta Funcao");
+                        case 4:mostra_clientes_banidos();
                             break;
-                        case 4:
-                            mostrar_info(lista);
-                            break;
-                        case 5:mostra_clientes_banidos();
-                            break;
-                        case 6:break;
+                        case 5:break;
                     }
-                } while (j != 6);
+                } while (j != 5);
                 break;
             case 2:
                 do {
@@ -67,8 +64,10 @@ int main(int argc, char **argv) {
                     switch (j) {
                         case 1: printf("NIF do Cliente: ");
                             scanf(" %d", &nif_aluguer);
-                            printf("ID da Guitarra: ");
-                            scanf(" %d", &id);
+                            do {
+                                printf("ID da Guitarra: ");
+                                scanf(" %d", &id);
+                            }while(verifica_guitarra_danificada(g, tam, id) != 0);
                             adiciona_aluguer(lista, g, tam, nif_aluguer, id);
                             break;
                         case 2:printf("NIF do cliente: ");
@@ -76,7 +75,7 @@ int main(int argc, char **argv) {
                             conclui_aluguer(lista, g, tam, nif);
                             break;
                         case 3:
-                            alugueres_activos(g,tam,lista);
+                            alugueres_activos(lista);
                             break;
                         case 4:break;
                     }

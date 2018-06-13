@@ -293,36 +293,51 @@ Data verifica_data(Aluguer *aux) {
     return temp;
 }
 
+int verifica_guitarra_danificada(Guitarra *g, int total, int id) {
+    for (int i = 0; i < total; i++) {
+        if ((g + i)->id == id) {
+            if ((g + i)->estado == 2)
+                return -1; //GUITARRA DANIFICADA, NAO PODE SER ALUGADA!
+        }
+    }
+    return 0; //QUALQUER GUITARRA PODE SER ALUGADA!
+}
+
 void adiciona_aluguer(Cliente *a, Guitarra *g, int total, int nif, int id) {
     Cliente *temp = a;
     Aluguer *novo;
     Data aux;
 
-    while (temp != NULL && temp->nif != nif)
-        temp = temp->prox;
+    if (temp->n_alugueres < 5) {
+        while (temp != NULL && temp->nif != nif)
+            temp = temp->prox;
 
-    if (temp != NULL) {
-        novo = malloc(sizeof (Aluguer));
-        if (novo == NULL)
-            return;
+        if (temp != NULL) {
+            novo = malloc(sizeof (Aluguer));
+            if (novo == NULL)
+                return;
 
-        novo->id = id;
-        novo->estado = 0;
-        g = actualiza_estado_guitarra(g, total, 1, novo->id);
+            novo->id = id;
+            novo->estado = 0;
+            g = actualiza_estado_guitarra(g, total, 1, novo->id);
 
-        printf("Data Inicial do Aluguer: ");
-        scanf(" %d %d %d", &novo->inicio.dia, &novo->inicio.mes, &novo->inicio.ano);
-        novo->fim.dia = 0; // METER A ZERO POR QUE O ALUGUER ESTÁ A DECORRER
-        novo->fim.mes = 0;
-        novo->fim.ano = 0;
+            printf("Data Inicial do Aluguer: ");
+            scanf(" %d %d %d", &novo->inicio.dia, &novo->inicio.mes, &novo->inicio.ano);
+            novo->fim.dia = 0; // METER A ZERO POR QUE O ALUGUER ESTÁ A DECORRER
+            novo->fim.mes = 0;
+            novo->fim.ano = 0;
 
-        aux = verifica_data(novo);
-        printf("Data Final do Aluguer: %d / %d / %d\n", aux.dia, aux.mes, aux.ano);
-        novo->prox = temp->lista; /*insere no inicio*/
-        temp->lista = novo;
-        temp->n_alugueres = temp->n_alugueres + 1;
+            aux = verifica_data(novo);
+            printf("Data Final do Aluguer: %d / %d / %d\n", aux.dia, aux.mes, aux.ano);
+            novo->prox = temp->lista; /*insere no inicio*/
+            temp->lista = novo;
+            temp->n_alugueres = temp->n_alugueres + 1;
+        }
+        escreve_ficheiro(a);
+    } else {
+        printf("Nao pode alugar mais guitarras de momento!\n");
+        return;
     }
-    escreve_ficheiro(a);
 }
 
 void remove_cliente_ficheiro(Cliente *c) {
@@ -487,17 +502,22 @@ void mostrar_info(Cliente *c) {
     }
 }
 
-void alugueres_activos(Guitarra *g, int tam, Cliente *c) {
+void alugueres_activos(Cliente *c) {
     Cliente *aux = c;
 
     while (aux) {
         Aluguer *aux1 = aux->lista;
-        while (aux1) {
-            if (aux1->estado == 0) {
-                printf("NIF do Cliente: %d\tID da Guitarra :%d\nData Inicial: %d/%d/%d\n",
-                        aux->nif, aux1->id, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano);
+        if(aux1 != NULL){
+            while (aux1) {
+                if (aux1->estado == 0) {
+                    printf("NIF do Cliente: %d\tID da Guitarra :%d\nData Inicial: %d/%d/%d\n",
+                            aux->nif, aux1->id, aux1->inicio.dia, aux1->inicio.mes, aux1->inicio.ano);
+                }
+                aux1 = aux1->prox;
             }
-            aux1 = aux1->prox;
+        }else{
+            printf("Nao existem alugueres de momento activos!\n");
+            return;
         }
         aux = aux-> prox;
     }
@@ -548,7 +568,6 @@ int verifica_atraso(Guitarra* g, int total, Aluguer *aux, Data temp) { //CONSIDE
 
     if ((temp.dia == temp_aux.dia && temp.ano > temp_aux.ano) || (temp.dia == temp_aux.dia && temp.mes > temp_aux.mes))
         return -1;
-
 }
 
 Guitarra *actualiza_estado_guitarra(Guitarra *g, int total, int estado, int id) {
